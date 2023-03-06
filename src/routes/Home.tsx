@@ -3,7 +3,7 @@ import {
   getNowPlayingMovies,
   getTopRatedMovies,
   getUpcomingMovies,
-  IGetMoviesResult,
+  IGetMdediasResult,
 } from '../api'
 import styled from 'styled-components'
 import { makeImagePath } from '../utils'
@@ -96,16 +96,15 @@ function Home() {
   const { scrollY } = useScroll()
 
   const useMultipleQuery = () => {
-    const nowPlaying = useQuery<IGetMoviesResult>(
+    const nowPlaying = useQuery<IGetMdediasResult>(
       ['movies', 'nowPlaying'],
       getNowPlayingMovies
     )
-
-    const topRated = useQuery<IGetMoviesResult>(
+    const topRated = useQuery<IGetMdediasResult>(
       ['movies', 'topRated'],
       getTopRatedMovies
     )
-    const upcoming = useQuery<IGetMoviesResult>(
+    const upcoming = useQuery<IGetMdediasResult>(
       ['movies', 'upcoming'],
       getUpcomingMovies
     )
@@ -149,13 +148,22 @@ function Home() {
           </Banner>
 
           <Slider
+            mediaType="movies"
             title="🍿 Now Playing"
             data={nowPlayingData?.results.slice(1) || []}
           />
 
-          <Slider title="✨ Top Rated" data={topRatedData?.results || []} />
+          <Slider
+            mediaType="movies"
+            title="✨ Top Rated"
+            data={topRatedData?.results || []}
+          />
 
-          <Slider title="🔥 Upcoming" data={upcomingData?.results || []} />
+          <Slider
+            mediaType="movies"
+            title="🔥 Upcoming"
+            data={upcomingData?.results || []}
+          />
 
           <AnimatePresence>
             {bigMovieMatch ? (

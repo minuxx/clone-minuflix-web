@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { IMovie } from '../api'
+import { IMedia } from '../api'
 import { makeImagePath } from '../utils'
 
 const Container = styled.div`
@@ -105,7 +105,7 @@ const boxVariants = {
   },
   hover: {
     scale: 1.3,
-    y: -80,
+    y: -10,
     transition: {
       type: 'tween',
       delay: 0.5,
@@ -156,11 +156,12 @@ const nextButtonVariants = {
 const offset = 6
 
 interface ISliderProps {
+  mediaType: string
   title: string
-  data: IMovie[]
+  data: IMedia[]
 }
 
-function Slider({ title, data }: ISliderProps) {
+function Slider({ mediaType, title, data }: ISliderProps) {
   const navigate = useNavigate()
   const [page, setPage] = useState(0)
   const [leaving, setLeaving] = useState(false)
@@ -183,8 +184,8 @@ function Slider({ title, data }: ISliderProps) {
   }
 
   const toggleLeaving = () => setLeaving((prev) => !prev)
-  const onBoxClick = (movieId: number) => {
-    navigate(`/movies/${movieId}`)
+  const onBoxClick = (mediaId: number) => {
+    navigate(`/${mediaType}/${mediaId}`)
   }
 
   return (
@@ -201,19 +202,19 @@ function Slider({ title, data }: ISliderProps) {
             transition={{ type: 'tween', duration: 1 }}
             key={page}
           >
-            {data?.slice(offset * page, offset * page + offset).map((movie) => (
+            {data?.slice(offset * page, offset * page + offset).map((media) => (
               <Box
-                layoutId={String(movie.id) + title}
-                key={movie.id}
+                layoutId={String(media.id) + title}
+                key={media.id}
                 variants={boxVariants}
                 initial="normal"
                 whileHover="hover"
-                onClick={() => onBoxClick(movie.id)}
+                onClick={() => onBoxClick(media.id)}
                 transition={{ type: 'tween' }}
-                bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}
+                bgPhoto={makeImagePath(media.backdrop_path, 'w500')}
               >
                 <Info variants={infoVariants}>
-                  <h4>{movie.title}</h4>
+                  <h4>{media?.title || media?.name}</h4>
                 </Info>
               </Box>
             ))}
