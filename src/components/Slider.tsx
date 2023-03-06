@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { IMovie } from '../api'
 import { makeImagePath } from '../utils'
+import { theme } from '../theme'
 
 const Wrapper = styled.div`
   position: relative;
@@ -35,16 +36,56 @@ const Box = styled(motion.div)<{ bgPhoto: string }>`
   }
 `
 
+const PrevButton = styled(motion.button)`
+  display: flex;
+  align-items: center;
+  height: 200px;
+  width: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`
+
+const NextButton = styled(motion.button)`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  height: 200px;
+  width: 50px;
+  top: 0;
+  right: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+`
+
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+
+  h4 {
+    font-size: 18px;
+    text-align: center;
+  }
+`
+
 const rowVariants = {
-  hidden: {
-    x: window.innerWidth + 5,
-  },
+  hidden: (isNextMove: boolean) => ({
+    x: isNextMove ? window.innerWidth + 5 : -window.innerWidth - 5,
+  }),
   visible: {
     x: 0,
   },
-  exit: {
-    x: -window.innerWidth - 5,
-  },
+  exit: (isNextMove: boolean) => ({
+    x: isNextMove ? -window.innerWidth - 5 : window.innerWidth + 5,
+  }),
 }
 
 const boxVariants = {
@@ -71,19 +112,35 @@ const infoVariants = {
   },
 }
 
-const Info = styled(motion.div)`
-  padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
-  opacity: 0;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
+const prevButtonVariants = {
+  normal: {
+    opacity: 0,
+  },
+  hover: {
+    opacity: 1,
+    background: 'linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
+    transition: {
+      type: 'tween',
+      delay: 0.5,
+      duration: 0.3,
+    },
+  },
+}
 
-  h4 {
-    font-size: 18px;
-    text-align: center;
-  }
-`
+const nextButtonVariants = {
+  normal: {
+    opacity: 0,
+  },
+  hover: {
+    opacity: 1,
+    background: 'linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1))',
+    transition: {
+      type: 'tween',
+      delay: 0.5,
+      duration: 0.3,
+    },
+  },
+}
 
 const offset = 6
 
@@ -93,17 +150,26 @@ interface ISliderProps {
 
 function Slider({ data }: ISliderProps) {
   const navigate = useNavigate()
-  const [index, setIndex] = useState(0)
+  const [page, setPage] = useState(0)
   const [leaving, setLeaving] = useState(false)
-  const increaseIndex = () => {
+  const [isNextMove, setIsNextMove] = useState(false)
+
+  const onMovePage = async (isNextMove: boolean) => {
     if (data) {
       if (leaving) return
       toggleLeaving()
-      const totalMovies = data.length - 1 // 하나는 배너
-      const maxIndex = Math.floor(totalMovies / offset) - 1 // 올림, 0부터 시작하니 -1
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1))
+      const totalLength = data.length
+      const maxPage = Math.floor(totalLength / offset) - 1
+      if (isNextMove) {
+        await setIsNextMove(true)
+        setPage((prev) => (prev === maxPage ? 0 : prev + 1))
+      } else {
+        await setIsNextMove(false)
+        setPage((prev) => (prev === 0 ? maxPage : prev - 1))
+      }
     }
   }
+
   const toggleLeaving = () => setLeaving((prev) => !prev)
   const onBoxClick = (movieId: number) => {
     navigate(`/movies/${movieId}`)
@@ -113,14 +179,15 @@ function Slider({ data }: ISliderProps) {
     <Wrapper>
       <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
         <Row
+          custom={isNextMove}
           variants={rowVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
           transition={{ type: 'tween', duration: 1 }}
-          key={index}
+          key={page}
         >
-          {data?.slice(offset * index, offset * index + offset).map((movie) => (
+          {data?.slice(offset * page, offset * page + offset).map((movie) => (
             <Box
               layoutId={String(movie.id)}
               key={movie.id}
@@ -138,6 +205,36 @@ function Slider({ data }: ISliderProps) {
           ))}
         </Row>
       </AnimatePresence>
+      <PrevButton
+        variants={prevButtonVariants}
+        initial="normal"
+        whileHover="hover"
+        onClick={() => onMovePage(false)}
+      >
+        <motion.svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="white"
+        >
+          <path d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z" />
+        </motion.svg>
+      </PrevButton>
+      <NextButton
+        variants={nextButtonVariants}
+        initial="normal"
+        whileHover="hover"
+        onClick={() => onMovePage(true)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="white"
+        >
+          <path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" />
+        </svg>
+      </NextButton>
     </Wrapper>
   )
 }

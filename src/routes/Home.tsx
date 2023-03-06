@@ -9,7 +9,8 @@ import Slider from '../components/Slider'
 
 const Wrapper = styled.div`
   background-color: black;
-  padding-bottom: 300px;
+  padding-bottom: 250px;
+  overflow: hidden;
 `
 
 const Loader = styled.div`
@@ -108,7 +109,7 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
 
-          <Slider data={data?.results || []} />
+          <Slider data={data?.results.slice(1) || []} />
           <AnimatePresence>
             {bigMovieMatch ? (
               <>
