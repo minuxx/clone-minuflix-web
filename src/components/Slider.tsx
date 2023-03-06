@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { IMovie } from '../api'
 import { makeImagePath } from '../utils'
-import { theme } from '../theme'
 
 const Wrapper = styled.div`
   position: relative;

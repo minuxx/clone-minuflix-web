@@ -6,6 +6,7 @@ import { makeImagePath } from '../utils'
 import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
+import SliderTitle from '../components/SliderTitle'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -109,6 +110,7 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
 
+          <SliderTitle title="Latest movies" />
           <Slider data={data?.results.slice(1) || []} />
           <AnimatePresence>
             {bigMovieMatch ? (
