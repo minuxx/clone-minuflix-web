@@ -1,12 +1,15 @@
-import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { getMovies, IGetMoviesResult } from '../api'
+import {
+  getNowPlayingMovies,
+  getTopRatedMovies,
+  getUpcomingMovies,
+  IGetMoviesResult,
+} from '../api'
 import styled from 'styled-components'
 import { makeImagePath } from '../utils'
 import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
-import SliderTitle from '../components/SliderTitle'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -41,6 +44,8 @@ const Overview = styled.p`
   font-size: 36px;
   width: 50%;
 `
+
+const SliderWrapper = styled.div``
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -89,15 +94,44 @@ function Home() {
   const navigate = useNavigate()
   const bigMovieMatch = useMatch('/movies/:id')
   const { scrollY } = useScroll()
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
-    ['movies', 'nowPlaying'],
-    getMovies
-  )
+
+  const useMultipleQuery = () => {
+    const nowPlaying = useQuery<IGetMoviesResult>(
+      ['movies', 'nowPlaying'],
+      getNowPlayingMovies
+    )
+
+    const topRated = useQuery<IGetMoviesResult>(
+      ['movies', 'topRated'],
+      getTopRatedMovies
+    )
+    const upcoming = useQuery<IGetMoviesResult>(
+      ['movies', 'upcoming'],
+      getUpcomingMovies
+    )
+    return [nowPlaying, topRated, upcoming]
+  }
+
+  const [
+    { isLoading: loadingNowPlaying, data: nowPlayingData },
+    { isLoading: loadingtopRated, data: topRatedData },
+    { isLoading: loadingupcoming, data: upcomingData },
+  ] = useMultipleQuery()
+
+  const isLoading = loadingNowPlaying && loadingtopRated && loadingupcoming
 
   const onOverlayClick = () => navigate('/')
   const clickedMovie =
     bigMovieMatch?.params.id &&
-    data?.results.find((movie) => String(movie.id) === bigMovieMatch.params.id)
+    (nowPlayingData?.results.find(
+      (movie) => String(movie.id) === bigMovieMatch.params.id
+    ) ||
+      topRatedData?.results.find(
+        (movie) => String(movie.id) === bigMovieMatch.params.id
+      ) ||
+      upcomingData?.results.find(
+        (movie) => String(movie.id) === bigMovieMatch.params.id
+      ))
 
   return (
     <Wrapper>
@@ -105,13 +139,24 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || '')}>
-            <Title>{data?.results[0].title}</Title>
-            <Overview>{data?.results[0].overview}</Overview>
+          <Banner
+            bgPhoto={makeImagePath(
+              nowPlayingData?.results[0].backdrop_path || ''
+            )}
+          >
+            <Title>{nowPlayingData?.results[0].title}</Title>
+            <Overview>{nowPlayingData?.results[0].overview}</Overview>
           </Banner>
 
-          <SliderTitle title="Latest movies" />
-          <Slider data={data?.results.slice(1) || []} />
+          <Slider
+            title="🍿 Now Playing"
+            data={nowPlayingData?.results.slice(1) || []}
+          />
+
+          <Slider title="✨ Top Rated" data={topRatedData?.results || []} />
+
+          <Slider title="🔥 Upcoming" data={upcomingData?.results || []} />
+
           <AnimatePresence>
             {bigMovieMatch ? (
               <>

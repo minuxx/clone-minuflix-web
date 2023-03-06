@@ -5,7 +5,19 @@ import styled from 'styled-components'
 import { IMovie } from '../api'
 import { makeImagePath } from '../utils'
 
-const Wrapper = styled.div`
+const Container = styled.div`
+  height: 300px;
+`
+
+const Title = styled.h3`
+  font-size: 28px;
+  font-weight: 400;
+  padding-left: 25px;
+  margin-bottom: 25px;
+  color: ${(props) => props.theme.white.lighter};
+`
+
+const SliderWrapper = styled.div`
   position: relative;
   top: -20px;
 `
@@ -144,10 +156,11 @@ const nextButtonVariants = {
 const offset = 6
 
 interface ISliderProps {
+  title: string
   data: IMovie[]
 }
 
-function Slider({ data }: ISliderProps) {
+function Slider({ title, data }: ISliderProps) {
   const navigate = useNavigate()
   const [page, setPage] = useState(0)
   const [leaving, setLeaving] = useState(false)
@@ -175,66 +188,69 @@ function Slider({ data }: ISliderProps) {
   }
 
   return (
-    <Wrapper>
-      <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-        <Row
-          custom={isNextMove}
-          variants={rowVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          transition={{ type: 'tween', duration: 1 }}
-          key={page}
+    <Container>
+      <Title>{title}</Title>
+      <SliderWrapper>
+        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+          <Row
+            custom={isNextMove}
+            variants={rowVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ type: 'tween', duration: 1 }}
+            key={page}
+          >
+            {data?.slice(offset * page, offset * page + offset).map((movie) => (
+              <Box
+                layoutId={String(movie.id) + title}
+                key={movie.id}
+                variants={boxVariants}
+                initial="normal"
+                whileHover="hover"
+                onClick={() => onBoxClick(movie.id)}
+                transition={{ type: 'tween' }}
+                bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}
+              >
+                <Info variants={infoVariants}>
+                  <h4>{movie.title}</h4>
+                </Info>
+              </Box>
+            ))}
+          </Row>
+        </AnimatePresence>
+        <PrevButton
+          variants={prevButtonVariants}
+          initial="normal"
+          whileHover="hover"
+          onClick={() => onMovePage(false)}
         >
-          {data?.slice(offset * page, offset * page + offset).map((movie) => (
-            <Box
-              layoutId={String(movie.id)}
-              key={movie.id}
-              variants={boxVariants}
-              initial="normal"
-              whileHover="hover"
-              onClick={() => onBoxClick(movie.id)}
-              transition={{ type: 'tween' }}
-              bgPhoto={makeImagePath(movie.backdrop_path, 'w500')}
-            >
-              <Info variants={infoVariants}>
-                <h4>{movie.title}</h4>
-              </Info>
-            </Box>
-          ))}
-        </Row>
-      </AnimatePresence>
-      <PrevButton
-        variants={prevButtonVariants}
-        initial="normal"
-        whileHover="hover"
-        onClick={() => onMovePage(false)}
-      >
-        <motion.svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="white"
+          <motion.svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="white"
+          >
+            <path d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z" />
+          </motion.svg>
+        </PrevButton>
+        <NextButton
+          variants={nextButtonVariants}
+          initial="normal"
+          whileHover="hover"
+          onClick={() => onMovePage(true)}
         >
-          <path d="M15.293 3.293 6.586 12l8.707 8.707 1.414-1.414L9.414 12l7.293-7.293-1.414-1.414z" />
-        </motion.svg>
-      </PrevButton>
-      <NextButton
-        variants={nextButtonVariants}
-        initial="normal"
-        whileHover="hover"
-        onClick={() => onMovePage(true)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="white"
-        >
-          <path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" />
-        </svg>
-      </NextButton>
-    </Wrapper>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="white"
+          >
+            <path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" />
+          </svg>
+        </NextButton>
+      </SliderWrapper>
+    </Container>
   )
 }
 
