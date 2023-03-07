@@ -74,7 +74,7 @@ const NextButton = styled(motion.button)`
 
 const Info = styled(motion.div)`
   padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
   opacity: 0;
   position: absolute;
   width: 100%;
@@ -82,7 +82,8 @@ const Info = styled(motion.div)`
 
   h4 {
     font-size: 18px;
-    text-align: center;
+    font-weight: 400;
+    text-align: start;
   }
 `
 

@@ -5,18 +5,12 @@ import styled from 'styled-components'
 import Slider from '../components/Slider'
 import { useEffect, useState } from 'react'
 import MediaModal from '../components/MediaModal'
+import Loader from '../components/Loader'
 
 const Wrapper = styled.div`
   background-color: black;
   padding-bottom: 250px;
   overflow: hidden;
-`
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 
 const Top = styled.div`
@@ -62,7 +56,7 @@ function Search() {
   return (
     <Wrapper>
       {isLoading ? (
-        <Loader>Loading...</Loader>
+        <Loader />
       ) : (
         <>
           <Top>

@@ -7,11 +7,11 @@ import {
 } from '../api'
 import styled from 'styled-components'
 import { makeImagePath } from '../utils'
-import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
 import { useState } from 'react'
 import MediaModal from '../components/MediaModal'
+import Banner from '../components/Banner'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -24,27 +24,6 @@ const Loader = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
-
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 60px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-`
-
-const Title = styled.h2`
-  font-size: 68px;
-  margin-bottom: 20px;
-`
-
-const Overview = styled.p`
-  font-size: 36px;
-  width: 50%;
 `
 
 function Home() {
@@ -100,13 +79,12 @@ function Home() {
       ) : (
         <>
           <Banner
-            bgPhoto={makeImagePath(
+            title={nowPlayingData?.results[0].title || ''}
+            overview={nowPlayingData?.results[0].overview || ''}
+            imgUrl={makeImagePath(
               nowPlayingData?.results[0].backdrop_path || ''
             )}
-          >
-            <Title>{nowPlayingData?.results[0].title}</Title>
-            <Overview>{nowPlayingData?.results[0].overview}</Overview>
-          </Banner>
+          />
 
           <Slider
             sliderTitle="🍿 Now Playing"

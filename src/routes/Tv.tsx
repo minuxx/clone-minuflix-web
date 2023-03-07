@@ -11,39 +11,13 @@ import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
 import { useState } from 'react'
 import MediaModal from '../components/MediaModal'
+import Banner from '../components/Banner'
+import Loader from '../components/Loader'
 
 const Wrapper = styled.div`
   background-color: black;
   padding-bottom: 250px;
   overflow: hidden;
-`
-
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 60px;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-`
-
-const Title = styled.h2`
-  font-size: 68px;
-  margin-bottom: 20px;
-`
-
-const Overview = styled.p`
-  font-size: 36px;
-  width: 50%;
 `
 
 function Tv() {
@@ -95,17 +69,18 @@ function Tv() {
   return (
     <Wrapper>
       {isLoading ? (
-        <Loader>Loading...</Loader>
+        <Loader />
       ) : (
         <>
           <Banner
-            bgPhoto={makeImagePath(
-              airingTodayData?.results[0].backdrop_path || ''
+            title={airingTodayData?.results[0].name || ''}
+            overview={airingTodayData?.results[0].overview || ''}
+            imgUrl={makeImagePath(
+              airingTodayData?.results[0].backdrop_path ||
+                airingTodayData?.results[0].poster_path ||
+                ''
             )}
-          >
-            <Title>{airingTodayData?.results[0].name}</Title>
-            <Overview>{airingTodayData?.results[0].overview}</Overview>
-          </Banner>
+          />
 
           <Slider
             sliderTitle="👀 Airing Today"
