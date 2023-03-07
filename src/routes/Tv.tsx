@@ -7,10 +7,10 @@ import {
 } from '../api'
 import styled from 'styled-components'
 import { makeImagePath } from '../utils'
-import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
 import { useState } from 'react'
+import MediaModal from '../components/MediaModal'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -46,55 +46,9 @@ const Overview = styled.p`
   width: 50%;
 `
 
-const SliderWrapper = styled.div``
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-`
-
-const BigMovie = styled(motion.div)`
-  position: absolute;
-  width: 40vw;
-  height: 80vh;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 15px;
-  overflow: hidden;
-  background-color: ${(props) => props.theme.black.lighter};
-`
-
-const BigCover = styled.div`
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  height: 400px;
-  border: 0;
-`
-
-const BigTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 20px;
-  font-size: 46px;
-  position: relative;
-  top: -80px;
-`
-
-const BigOverview = styled.p`
-  padding: 20px;
-  position: relative;
-  color: ${(props) => props.theme.white.lighter};
-  top: -80px;
-`
-
 function Tv() {
   const navigate = useNavigate()
   const bigTvShowsMatch = useMatch('/tv/:id')
-  const { scrollY } = useScroll()
   const [sliderTtile, setSliderTitle] = useState('')
 
   const useMultipleQuery = () => {
@@ -121,23 +75,22 @@ function Tv() {
 
   const isLoading = loadingAiringToday && loadingPopular && loadingTopRated
 
-  const onOverlayClick = () => navigate('/tv')
-  const clickedTv =
-    bigTvShowsMatch?.params.id &&
-    (airingTodayData?.results.find(
-      (tvShows) => String(tvShows.id) === bigTvShowsMatch.params.id
+  const clickedTvShow =
+    airingTodayData?.results.find(
+      (tvShows) => String(tvShows.id) === bigTvShowsMatch?.params.id
     ) ||
-      popularData?.results.find(
-        (tvShows) => String(tvShows.id) === bigTvShowsMatch.params.id
-      ) ||
-      topRatedData?.results.find(
-        (tvShows) => String(tvShows.id) === bigTvShowsMatch.params.id
-      ))
+    popularData?.results.find(
+      (tvShows) => String(tvShows.id) === bigTvShowsMatch?.params.id
+    ) ||
+    topRatedData?.results.find(
+      (tvShows) => String(tvShows.id) === bigTvShowsMatch?.params.id
+    )
 
   const onBoxClick = (mediaId: number, sliderTitle: string) => {
     setSliderTitle(sliderTitle)
     navigate(`/tv/${mediaId}`)
   }
+  const onOverlayClick = () => navigate('/tv')
 
   return (
     <Wrapper>
@@ -175,36 +128,11 @@ function Tv() {
             data={topRatedData?.results || []}
           />
 
-          <AnimatePresence>
-            {bigTvShowsMatch ? (
-              <>
-                <Overlay
-                  onClick={onOverlayClick}
-                  exit={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                />
-                <BigMovie
-                  layoutId={bigTvShowsMatch.params.id + sliderTtile}
-                  style={{ top: scrollY.get() + 100 }}
-                >
-                  {clickedTv && (
-                    <>
-                      <BigCover
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            clickedTv.backdrop_path || clickedTv.poster_path,
-                            'w500'
-                          )})`,
-                        }}
-                      />
-                      <BigTitle>{clickedTv.name}</BigTitle>
-                      <BigOverview>{clickedTv.overview}</BigOverview>
-                    </>
-                  )}
-                </BigMovie>
-              </>
-            ) : null}
-          </AnimatePresence>
+          <MediaModal
+            media={clickedTvShow}
+            sliderTitle={sliderTtile}
+            onOverlayClick={onOverlayClick}
+          />
         </>
       )}
     </Wrapper>

@@ -6,8 +6,8 @@ import {
   useMotionValueEvent,
   useScroll,
 } from 'framer-motion'
-import { useEffect, useState } from 'react'
-import { set, useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -163,7 +163,6 @@ function Header() {
 
   return (
     <Nav variants={navVariants} initial="top" animate={navAnimation}>
-      {/* 혹은 animate={{backgroundColor: scrollY > 80 ? "Color 1" : "Color 2"}}*/}
       <Col>
         <Logo
           variants={logVariants}

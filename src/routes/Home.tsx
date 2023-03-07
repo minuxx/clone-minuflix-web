@@ -11,6 +11,7 @@ import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
 import { useState } from 'react'
+import MediaModal from '../components/MediaModal'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -46,53 +47,9 @@ const Overview = styled.p`
   width: 50%;
 `
 
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-`
-
-const BigMovie = styled(motion.div)`
-  position: absolute;
-  width: 40vw;
-  height: 80vh;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 15px;
-  overflow: hidden;
-  background-color: ${(props) => props.theme.black.lighter};
-`
-
-const BigCover = styled.div`
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  height: 400px;
-  border: 0;
-`
-
-const BigTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 20px;
-  font-size: 46px;
-  position: relative;
-  top: -80px;
-`
-
-const BigOverview = styled.p`
-  padding: 20px;
-  position: relative;
-  color: ${(props) => props.theme.white.lighter};
-  top: -80px;
-`
-
 function Home() {
   const navigate = useNavigate()
   const bigMovieMatch = useMatch('/movies/:id')
-  const { scrollY } = useScroll()
   const [sliderTtile, setSliderTitle] = useState('')
 
   const useMultipleQuery = () => {
@@ -119,23 +76,22 @@ function Home() {
 
   const isLoading = loadingNowPlaying && loadingtopRated && loadingupcoming
 
-  const onOverlayClick = () => navigate('/')
   const clickedMovie =
-    bigMovieMatch?.params.id &&
-    (nowPlayingData?.results.find(
-      (movie) => String(movie.id) === bigMovieMatch.params.id
+    nowPlayingData?.results.find(
+      (movie) => String(movie.id) === bigMovieMatch?.params.id
     ) ||
-      topRatedData?.results.find(
-        (movie) => String(movie.id) === bigMovieMatch.params.id
-      ) ||
-      upcomingData?.results.find(
-        (movie) => String(movie.id) === bigMovieMatch.params.id
-      ))
+    topRatedData?.results.find(
+      (movie) => String(movie.id) === bigMovieMatch?.params.id
+    ) ||
+    upcomingData?.results.find(
+      (movie) => String(movie.id) === bigMovieMatch?.params.id
+    )
 
   const onBoxClick = (mediaId: number, sliderTitle: string) => {
     setSliderTitle(sliderTitle)
     navigate(`/movies/${mediaId}`)
   }
+  const onOverlayClick = () => navigate('/')
 
   return (
     <Wrapper>
@@ -173,37 +129,11 @@ function Home() {
             data={upcomingData?.results || []}
           />
 
-          <AnimatePresence>
-            {bigMovieMatch ? (
-              <>
-                <Overlay
-                  onClick={onOverlayClick}
-                  exit={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                />
-                <BigMovie
-                  layoutId={bigMovieMatch.params.id + sliderTtile}
-                  style={{ top: scrollY.get() + 100 }}
-                >
-                  {clickedMovie && (
-                    <>
-                      <BigCover
-                        style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            clickedMovie.backdrop_path ||
-                              clickedMovie.poster_path,
-                            'w500'
-                          )})`,
-                        }}
-                      />
-                      <BigTitle>{clickedMovie.title}</BigTitle>
-                      <BigOverview>{clickedMovie.overview}</BigOverview>
-                    </>
-                  )}
-                </BigMovie>
-              </>
-            ) : null}
-          </AnimatePresence>
+          <MediaModal
+            media={clickedMovie}
+            sliderTitle={sliderTtile}
+            onOverlayClick={onOverlayClick}
+          />
         </>
       )}
     </Wrapper>
