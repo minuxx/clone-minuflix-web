@@ -39,10 +39,9 @@ export interface IGetMediaResult {
   overview: string
   popularity: number
   vote_average: number
-  vote_count: number
-  adult?: boolean
+  release_date?: string
+  first_air_date?: string
   seasons?: ISeason
-  tagline: string
 }
 
 export function getNowPlayingMovies() {

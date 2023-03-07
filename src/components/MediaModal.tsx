@@ -60,8 +60,15 @@ const Info = styled.div`
   position: relative;
   flex-direction: column;
   color: ${(props) => props.theme.white.lighter};
-  padding: 20px;
+  padding: 10px 20px;
   top: -80px;
+`
+
+const Date = styled.span`
+  font-size: 13px;
+  font-weight: 300;
+  color: ${(props) => props.theme.white.darker};
+  margin-bottom: 8px;
 `
 
 const InfoHeader = styled.div`
@@ -93,6 +100,7 @@ const GenreBox = styled.div`
   gap: 8px;
   margin-bottom: 20px;
 `
+
 const Genre = styled.span`
   width: fit-content;
   font-size: 14px;
@@ -156,6 +164,10 @@ function MediaModal({
                 <Title>{media.title || media.name}</Title>
 
                 <Info>
+                  <Date>
+                    {data?.first_air_date || data?.release_date || ''}
+                  </Date>
+
                   <InfoHeader>
                     <Vote>🍿 {data?.vote_average.toFixed(1) || 0} / 10</Vote>
                     <Popularity>🔥 {data?.popularity.toFixed(1)}%</Popularity>
