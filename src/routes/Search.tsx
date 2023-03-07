@@ -82,6 +82,7 @@ function Search() {
 
           <MediaModal
             media={clickedMedia}
+            mediaType={movieId ? 'movie' : 'tv'}
             sliderTitle={sliderTtile}
             onOverlayClick={onOverlayClick}
           />

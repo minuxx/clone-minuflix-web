@@ -105,6 +105,7 @@ function Tv() {
 
           <MediaModal
             media={clickedTvShow}
+            mediaType="tv"
             sliderTitle={sliderTtile}
             onOverlayClick={onOverlayClick}
           />

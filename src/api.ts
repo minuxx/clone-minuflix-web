@@ -1,3 +1,5 @@
+import { ErrorResponse } from '@remix-run/router'
+
 const API_KEY = 'ed8f5e6c3b01b09d1cf884f7315fc7de'
 const BASE_URL = 'https://api.themoviedb.org/3'
 
@@ -22,6 +24,27 @@ export interface IGetMdediasResult {
   total_results: number
 }
 
+interface IGenre {
+  name: string
+}
+
+interface ISeason {
+  name: string
+  overview: string
+}
+
+export interface IGetMediaResult {
+  id: number
+  genres: IGenre[]
+  overview: string
+  popularity: number
+  vote_average: number
+  vote_count: number
+  adult?: boolean
+  seasons?: ISeason
+  tagline: string
+}
+
 export function getNowPlayingMovies() {
   return fetch(`${BASE_URL}/movie/now_playing?api_key=${API_KEY}`).then(
     (response) => response.json()
@@ -43,6 +66,12 @@ export function getTopRatedMovies() {
 
 export function getUpcomingMovies() {
   return fetch(`${BASE_URL}/movie/upcoming?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  )
+}
+
+export function getMedia(mediaType: string, mediaId: number) {
+  return fetch(`${BASE_URL}/${mediaType}/${mediaId}?api_key=${API_KEY}`).then(
     (response) => response.json()
   )
 }
