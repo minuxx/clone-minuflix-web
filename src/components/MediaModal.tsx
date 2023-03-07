@@ -32,7 +32,7 @@ const Modal = styled(motion.div)`
   right: 0;
   margin: 0 auto;
   border-radius: 15px;
-  overflow: hidden;
+  overflow: auto;
   background-color: ${(props) => props.theme.black.lighter};
 `
 
