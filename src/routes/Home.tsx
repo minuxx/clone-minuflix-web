@@ -45,8 +45,6 @@ const Overview = styled.p`
   width: 50%;
 `
 
-const SliderWrapper = styled.div``
-
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;

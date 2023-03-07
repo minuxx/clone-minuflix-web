@@ -10,10 +10,10 @@ const Container = styled.div`
 `
 
 const Title = styled.h3`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 400;
   padding-left: 25px;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   color: ${(props) => props.theme.white.lighter};
 `
 
@@ -211,7 +211,10 @@ function Slider({ mediaType, title, data }: ISliderProps) {
                 whileHover="hover"
                 onClick={() => onBoxClick(media.id)}
                 transition={{ type: 'tween' }}
-                bgPhoto={makeImagePath(media.backdrop_path, 'w500')}
+                bgPhoto={makeImagePath(
+                  media.backdrop_path || media.poster_path,
+                  'w500'
+                )}
               >
                 <Info variants={infoVariants}>
                   <h4>{media?.title || media?.name}</h4>

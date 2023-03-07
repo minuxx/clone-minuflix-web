@@ -6,6 +6,7 @@ export interface IMedia {
   backdrop_path: string
   poster_path: string
   overview: string
+  media_type: string
   name?: string
   title?: string
 }
@@ -60,4 +61,10 @@ export function getTopRatedTvShows() {
   return fetch(`${BASE_URL}/tv/top_rated?api_key=${API_KEY}`).then((response) =>
     response.json()
   )
+}
+
+export function searchMedia(keyword: string) {
+  return fetch(
+    `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${keyword}`
+  ).then((response) => response.json())
 }

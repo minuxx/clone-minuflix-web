@@ -1,11 +1,8 @@
 import { useQuery } from 'react-query'
 import {
   getAiringTodayTvShows,
-  getNowPlayingMovies,
   getPopularTvShows,
-  getTopRatedMovies,
   getTopRatedTvShows,
-  getUpcomingMovies,
   IGetMdediasResult,
 } from '../api'
 import styled from 'styled-components'

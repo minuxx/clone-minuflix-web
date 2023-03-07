@@ -124,7 +124,7 @@ function Header() {
   const inputAnimation = useAnimation() // animation을 코드를 통해 실행/중지시키고 싶을 때
   const navAnimation = useAnimation()
   const { scrollY } = useScroll()
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit, setValue } = useForm()
   const navigate = useNavigate()
 
   const onValid = (data: IForm) => {
@@ -144,6 +144,7 @@ function Header() {
       inputAnimation.start({
         scaleX: 0,
       })
+      setValue('keyword', '')
     } else {
       inputAnimation.start({
         scaleX: 1,
