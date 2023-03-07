@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/minuflix/static/js/main.9029b1b4.js",
+    "main.js": "/minuflix/static/js/main.27f858c1.js",
     "index.html": "/minuflix/index.html",
-    "main.9029b1b4.js.map": "/minuflix/static/js/main.9029b1b4.js.map"
+    "main.27f858c1.js.map": "/minuflix/static/js/main.27f858c1.js.map"
   },
   "entrypoints": [
-    "static/js/main.9029b1b4.js"
+    "static/js/main.27f858c1.js"
   ]
 }
