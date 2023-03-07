@@ -155,14 +155,19 @@ const nextButtonVariants = {
 
 const offset = 6
 
-interface ISliderProps {
-  mediaType: string
-  title: string
-  data: IMedia[]
+type OnBoxClick = {
+  (mediaId: number, sliderTitle: string): void
+  (mediaId: number, sliderTitle: string, mediaType: string): void
 }
 
-function Slider({ mediaType, title, data }: ISliderProps) {
-  const navigate = useNavigate()
+interface ISliderProps {
+  sliderTitle: string
+  mediaType: string
+  data: IMedia[]
+  onBoxClick: OnBoxClick
+}
+
+function Slider({ sliderTitle, mediaType, data, onBoxClick }: ISliderProps) {
   const [page, setPage] = useState(0)
   const [leaving, setLeaving] = useState(false)
   const [isNextMove, setIsNextMove] = useState(false)
@@ -184,13 +189,10 @@ function Slider({ mediaType, title, data }: ISliderProps) {
   }
 
   const toggleLeaving = () => setLeaving((prev) => !prev)
-  const onBoxClick = (mediaId: number) => {
-    navigate(`/${mediaType}/${mediaId}`)
-  }
 
   return (
     <Container>
-      <Title>{title}</Title>
+      <Title>{sliderTitle}</Title>
       <SliderWrapper>
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
@@ -204,12 +206,12 @@ function Slider({ mediaType, title, data }: ISliderProps) {
           >
             {data?.slice(offset * page, offset * page + offset).map((media) => (
               <Box
-                layoutId={String(media.id) + title}
+                layoutId={String(media.id) + sliderTitle}
                 key={media.id}
                 variants={boxVariants}
                 initial="normal"
                 whileHover="hover"
-                onClick={() => onBoxClick(media.id)}
+                onClick={() => onBoxClick(media.id, sliderTitle, mediaType)}
                 transition={{ type: 'tween' }}
                 bgPhoto={makeImagePath(
                   media.backdrop_path || media.poster_path,

@@ -10,6 +10,7 @@ import { makeImagePath } from '../utils'
 import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
+import { useState } from 'react'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -92,6 +93,7 @@ function Home() {
   const navigate = useNavigate()
   const bigMovieMatch = useMatch('/movies/:id')
   const { scrollY } = useScroll()
+  const [sliderTtile, setSliderTitle] = useState('')
 
   const useMultipleQuery = () => {
     const nowPlaying = useQuery<IGetMdediasResult>(
@@ -130,6 +132,11 @@ function Home() {
         (movie) => String(movie.id) === bigMovieMatch.params.id
       ))
 
+  const onBoxClick = (mediaId: number, sliderTitle: string) => {
+    setSliderTitle(sliderTitle)
+    navigate(`/movies/${mediaId}`)
+  }
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -146,20 +153,23 @@ function Home() {
           </Banner>
 
           <Slider
-            mediaType="movies"
-            title="🍿 Now Playing"
+            sliderTitle="🍿 Now Playing"
+            mediaType="movie"
+            onBoxClick={onBoxClick}
             data={nowPlayingData?.results.slice(1) || []}
           />
 
           <Slider
-            mediaType="movies"
-            title="✨ Top Rated"
+            sliderTitle="✨ Top Rated"
+            mediaType="movie"
+            onBoxClick={onBoxClick}
             data={topRatedData?.results || []}
           />
 
           <Slider
-            mediaType="movies"
-            title="🔥 Upcoming"
+            sliderTitle="🔥 Upcoming"
+            mediaType="movie"
+            onBoxClick={onBoxClick}
             data={upcomingData?.results || []}
           />
 
@@ -172,7 +182,7 @@ function Home() {
                   animate={{ opacity: 1 }}
                 />
                 <BigMovie
-                  layoutId={bigMovieMatch.params.id}
+                  layoutId={bigMovieMatch.params.id + sliderTtile}
                   style={{ top: scrollY.get() + 100 }}
                 >
                   {clickedMovie && (
@@ -180,7 +190,8 @@ function Home() {
                       <BigCover
                         style={{
                           backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            clickedMovie.backdrop_path,
+                            clickedMovie.backdrop_path ||
+                              clickedMovie.poster_path,
                             'w500'
                           )})`,
                         }}

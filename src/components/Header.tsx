@@ -6,8 +6,8 @@ import {
   useMotionValueEvent,
   useScroll,
 } from 'framer-motion'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import { set, useForm } from 'react-hook-form'
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -153,6 +153,14 @@ function Header() {
     setSearchOpen((prev) => !prev)
   }
 
+  const onClickLink = () => {
+    inputAnimation.start({
+      scaleX: 0,
+    })
+    setSearchOpen(false)
+    setValue('keyword', '')
+  }
+
   return (
     <Nav variants={navVariants} initial="top" animate={navAnimation}>
       {/* 혹은 animate={{backgroundColor: scrollY > 80 ? "Color 1" : "Color 2"}}*/}
@@ -170,12 +178,12 @@ function Header() {
         </Logo>
         <Items>
           <Item>
-            <Link to="/">
+            <Link to="/" onClick={onClickLink}>
               Home {homeMatch !== null ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>
           <Item>
-            <Link to="/tv">
+            <Link to="/tv" onClick={onClickLink}>
               Tv Shows {tvMatch !== null ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>

@@ -10,6 +10,7 @@ import { makeImagePath } from '../utils'
 import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { useMatch, useNavigate } from 'react-router-dom'
 import Slider from '../components/Slider'
+import { useState } from 'react'
 
 const Wrapper = styled.div`
   background-color: black;
@@ -94,6 +95,7 @@ function Tv() {
   const navigate = useNavigate()
   const bigTvShowsMatch = useMatch('/tv/:id')
   const { scrollY } = useScroll()
+  const [sliderTtile, setSliderTitle] = useState('')
 
   const useMultipleQuery = () => {
     const airingToday = useQuery<IGetMdediasResult>(
@@ -132,6 +134,11 @@ function Tv() {
         (tvShows) => String(tvShows.id) === bigTvShowsMatch.params.id
       ))
 
+  const onBoxClick = (mediaId: number, sliderTitle: string) => {
+    setSliderTitle(sliderTitle)
+    navigate(`/tv/${mediaId}`)
+  }
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -148,20 +155,23 @@ function Tv() {
           </Banner>
 
           <Slider
+            sliderTitle="👀 Airing Today"
             mediaType="tv"
-            title="👀 Airing Today"
+            onBoxClick={onBoxClick}
             data={airingTodayData?.results.slice(1) || []}
           />
 
           <Slider
+            sliderTitle="🦄 Popular"
             mediaType="tv"
-            title="🦄 Popular"
+            onBoxClick={onBoxClick}
             data={popularData?.results || []}
           />
 
           <Slider
+            sliderTitle="✨ Top Rated"
             mediaType="tv"
-            title="✨ Top Rated"
+            onBoxClick={onBoxClick}
             data={topRatedData?.results || []}
           />
 
@@ -174,7 +184,7 @@ function Tv() {
                   animate={{ opacity: 1 }}
                 />
                 <BigMovie
-                  layoutId={bigTvShowsMatch.params.id}
+                  layoutId={bigTvShowsMatch.params.id + sliderTtile}
                   style={{ top: scrollY.get() + 100 }}
                 >
                   {clickedTv && (
@@ -182,7 +192,7 @@ function Tv() {
                       <BigCover
                         style={{
                           backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                            clickedTv.backdrop_path,
+                            clickedTv.backdrop_path || clickedTv.poster_path,
                             'w500'
                           )})`,
                         }}
